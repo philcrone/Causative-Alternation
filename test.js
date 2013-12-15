@@ -100,7 +100,12 @@ function glow(element, delay_time){
 	setTimeout(function(){glow_stuff.show()}, delay_time);
 }	
 
-var animations = [fill, grow, shrink, change_color, glow];
+function disappear(element, delay_time){
+	var disappear_anim = Raphael.animation({"stroke-opacity":0}, anim_time);
+	element.animate(disappear_anim.delay(delay_time))
+}
+
+var animations = [fill, grow, shrink, change_color, glow, disappear];
 var exp_animations = shuffle(animations);
 
 function intrans (animation, element){
