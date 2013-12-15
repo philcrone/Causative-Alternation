@@ -1,16 +1,28 @@
 var paper = Raphael(0, 0, 600, 600);
-var coordinates = shuffle([[200,200],[400,200],[300,400]])
-console.log(coordinates);
-var red_circle = paper.circle(coordinates[0][0], coordinates[0][1], 50);
-var blue_circle = paper.circle(coordinates[1][0], coordinates[1][1], 50);
-var green_circle = paper.circle(coordinates[2][0], coordinates[2][1], 50);
-red_circle.attr("stroke", "red");
-red_circle.attr("stroke-width", 5);
-blue_circle.attr("stroke", "blue");
-blue_circle.attr("stroke-width", 5);
-green_circle.attr("stroke", "green");
-green_circle.attr("stroke-width", 5);
-var circles = [red_circle, green_circle, blue_circle];
+var coordinates = [[200,200],[400,200],[300,400]];
+var exp_coordinates = shuffle(coordinates);
+var colors = ["red","blue","green"];
+var exp_colors = shuffle(colors);
+var shapes = ["circle", "square", "triangle"];
+var exp_shapes = shuffle(shapes);
+var obj_1;
+var obj_2;
+var obj_3;
+var objs = [obj_1, obj_2, obj_3];
+for (var i=0; i < objs.length;i++){
+	if (exp_shapes[i] == "circle"){
+		objs[i] = paper.circle(0,0,50);
+	}
+	else if (exp_shapes[i] == "square"){
+		objs[i] = paper.rect(-44, -44,88,88,0);
+	}
+	else if (exp_shapes[i] == "triangle"){
+		objs[i] = paper.path("M-50,-43.5L50,-43.5L0,43.5Z");
+	}
+	objs[i].transform("t" + exp_coordinates[i][0] + "," + exp_coordinates[i][1]);
+	objs[i].attr("stroke-width", 5);
+	objs[i].attr("stroke", exp_colors[i]);
+}
 
 function fill(element,delay_time){
 	var fill_anim = Raphael.animation({fill:element.attr("stroke")}, 1000);
