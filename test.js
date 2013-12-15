@@ -52,6 +52,21 @@ function fill(element,delay_time){
 	element.animate(fill_anim.delay(delay_time))
 }
 
+function grow(element, delay_time){
+	var grow_anim = Raphael.animation({transform:element.attr("transform")+"s2"}, anim_time);
+	element.animate(grow_anim.delay(delay_time));
+}
+
+function glow(element, delay_time){
+	console.log(element.attr("stroke"));
+	var glow_stuff = element.glow({width:50, color:element.attr("stroke")});
+	glow_stuff.hide();
+	setTimeout(function(){glow_stuff.show()}, delay_time);
+}	
+
+var animations = [fill, grow, glow];
+var exp_animations = shuffle(animations);
+
 function intrans (animation, element){
 	animation(element,exp_delay);
 }
@@ -59,6 +74,7 @@ function intrans (animation, element){
 function trans (animation, elements){
 	var element1 = elements[0];
 	var element2 = elements[1];
+	element1.toFront();
 	move_to(elements);
 	animation(element2,anim_time+exp_delay);
 }
@@ -70,8 +86,8 @@ function get_elements () {
 }
 
 if (exp_causation == intrans){
-	exp_causation(fill, elements[0]);
+	exp_causation(exp_animations[0], elements[0]);
 }
 else {
-	exp_causation(fill, elements);
+	exp_causation(exp_animations[0], elements);
 }
