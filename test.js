@@ -57,14 +57,50 @@ function grow(element, delay_time){
 	element.animate(grow_anim.delay(delay_time));
 }
 
+function shrink(element, delay_time){
+	var grow_anim = Raphael.animation({transform:element.attr("transform")+"s0.25"}, anim_time);
+	element.animate(grow_anim.delay(delay_time));
+}
+
+function change_color(element, delay_time){
+	var element_color = Raphael.getRGB(element.attr("stroke")).toString();
+	element_color = element_color.replace("#","");
+	hexnum = element_color.toUpperCase();
+  	var splitnum = hexnum.split("");
+  	var resultnum = "";
+  	var simplenum = "FEDCBA9876".split("");
+  	var complexnum = new Array();
+  	complexnum.A = "5";
+  	complexnum.B = "4";
+  	complexnum.C = "3";
+  	complexnum.D = "2";
+  	complexnum.E = "1";
+  	complexnum.F = "0";
+	
+	for(i=0; i<6; i++){
+    if(!isNaN(splitnum[i])) {
+      resultnum += simplenum[splitnum[i]]; 
+    } else if(complexnum[splitnum[i]]){
+      resultnum += complexnum[splitnum[i]]; 
+    } else {
+      alert("Hex colors must only include hex numbers 0-9, and A-F");
+      return false;
+    }
+  	};
+  	
+  	var color_anim = Raphael.animation({stroke:"#"+resultnum}, anim_time);
+  	element.animate(color_anim.delay(delay_time));
+	console.log(element_color);
+	console.log(resultnum);
+}
+
 function glow(element, delay_time){
-	console.log(element.attr("stroke"));
 	var glow_stuff = element.glow({width:50, color:element.attr("stroke")});
 	glow_stuff.hide();
 	setTimeout(function(){glow_stuff.show()}, delay_time);
 }	
 
-var animations = [fill, grow, glow];
+var animations = [fill, grow, shrink, change_color, glow];
 var exp_animations = shuffle(animations);
 
 function intrans (animation, element){
