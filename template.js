@@ -145,8 +145,10 @@ var experiment = {
 			//var startTime = new Date.getTime();
 			qdata = {};
 			var startTime = (new Date()).getTime(); 
-			$("#error").hide();
+			$("#no_answer").hide();
+			$("#too_fast").hide();
 			var judgment = false;
+
 			var paper = Raphael("canvas", 450, 450);
 
 			var coordinates = [[150,150],[300,150],[225,300]];
@@ -257,20 +259,25 @@ var experiment = {
 				trans(exp_animations[num]);
 				$("#questiontxt").html('The '+ elements[0].data("color") + " " + elements[0].data("shape") + " didn't cause the "+ elements[1].data("color") + " " + elements[1].data("shape") + " to " + exp_verbs[num]+".");
 			}
+			
 			$(".rating").change(function() {
 				qdata.response = $(this).attr("value");
 				judgment = true;
         	});
 	    	$("#continue").click(function() {
+	    		var clickTime = (new Date()).getTime();
 	    		if (!judgment) { // test for answer meeting relevant parameters -- e.g., all questions answered
 	    			// if no, show some text saying so and ask them to answer appropriately
-	    			$("#error").show()
-	    		} else { // advance to next question
+	    			$("#no_answer").show()
+	    		} 
+	    		else if ((clickTime - startTime) < (exp_delay + anim_time)){
+	    			$("#too_fast").show()
+	    		}
+	    		else { // advance to next question
 	    			var endTime = (new Date()).getTime(); 
 	    			qdata.rt = endTime - startTime;
 	    			$("#continue").unbind('click'); // remove this fxn after using it once, so we can reuse the button
 					$('.rating').attr('checked',false);
-	    			//qdata.rt = new Date.getTime() - startTime;
 	    			clearPaper(paper);
 	    			experiment.data['q' + num + 'data'] = qdata; // add trial data to experiment.data object, which is what we'll eventually submit to MTurk
 	    			experiment.next(num + 1);
