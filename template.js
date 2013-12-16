@@ -2,7 +2,7 @@ var numberOfQuestions = 6; // or if you have a fixed stim set, it may make sense
 var exp_delay = 2500;
 var anim_time = 1000;
 
-var sentence_types = ["intras_pos","intrans_neg","trans_pos","trans_neg","peri_pos","peri_neg"];
+var sentence_types = ["intrans_pos","intrans_neg","trans_pos","trans_neg","peri_pos","peri_neg"];
 var exp_sentences = shuffle(sentence_types);
 
 var verbs = ["cheem","dax","zook","blonk","plaz","brilt"]
@@ -132,6 +132,7 @@ var experiment = {
 			showSlide("stage");
 			//var startTime = new Date.getTime();
 			qdata = {};
+			var startTime = (new Date()).getTime(); 
 			$("#error").hide();
 			var judgment = false;
 			var paper = Raphael("canvas", 450, 450);
@@ -185,19 +186,24 @@ var experiment = {
 				animation(elements[0],exp_delay);
 			}
 
-			function trans (animation){
-				var element1 = elements[0];
-				var element2 = elements[1];
-				element1.toFront();
+			function trans (animation){	
+				elements[0].toFront();
 				move_to();
-				animation(element2,anim_time+exp_delay);
+				animation(elements[1],anim_time+exp_delay);
 			}
+			
+			qdata.sentence_type = exp_sentences[num];
+			qdata.question = num + 1;
+			qdata.verb = exp_verbs[num];
+			qdata.obj1 = elements[0].data("color") + " " + elements[0].data("shape");
+			qdata.obj2 = elements[1].data("color") + " " + elements[1].data("shape");
+			qdata.obj3 = elements[2].data("color") + " " + elements[2].data("shape");
 
-			if (exp_sentences[num] == "intras_pos"){
+			if (exp_sentences[num] == "intrans_pos"){
 				intrans(exp_animations[num]);
 				$("#questiontxt").html('The '+ elements[0].data("color") + " " + elements[0].data("shape") + " " + exp_verbs[num]+"ed."); 
 			}
-			else if (exp_sentences[num] == "intras_neg"){
+			else if (exp_sentences[num] == "intrans_neg"){
 				intrans(exp_animations[num]);
 				$("#questiontxt").html('The '+ elements[1].data("color") + " " + elements[1].data("shape") + " didn't " + exp_verbs[num] +"."); 
 			}
@@ -219,7 +225,7 @@ var experiment = {
 			}
 			var response;
 			$(".rating").change(function() {
-				response = $(this).attr("value");
+				qdata.response = $(this).attr("value");
 				judgment = true;
         	});
 	    	$("#continue").click(function() {
@@ -227,9 +233,10 @@ var experiment = {
 	    			// if no, show some text saying so and ask them to answer appropriately
 	    			$("#error").show()
 	    		} else { // advance to next question
+	    			var endTime = (new Date()).getTime(); 
+	    			qdata.rt = endTime - startTime;
 	    			$("#continue").unbind('click'); // remove this fxn after using it once, so we can reuse the button
 					$('.rating').attr('checked',false);
-	    			qdata.response = response;
 	    			//qdata.rt = new Date.getTime() - startTime;
 	    			clearPaper(paper);
 	    			experiment.data['q' + num + 'data'] = qdata; // add trial data to experiment.data object, which is what we'll eventually submit to MTurk
