@@ -1,15 +1,27 @@
-var numberOfQuestions = 6; // or if you have a fixed stim set, it may make sense to eliminate this variable and use its length as the counter
+var numberOfQuestions = 12; // or if you have a fixed stim set, it may make sense to eliminate this variable and use its length as the counter
 var exp_delay = 2500;
 var anim_time = 1000;
 
-var sentence_types = ["intrans_pos","intrans_neg","trans_pos","trans_neg","peri_pos","peri_neg"];
+var sentence_types = [	"intrans_pos_true",
+						"intrans_neg_true",
+						"trans_pos_true",
+						"trans_neg_true",
+						"peri_pos_true",
+						"peri_neg_true",
+						"intrans_pos_false",
+						"intrans_neg_false",
+						"trans_pos_false",
+						"trans_neg_false",
+						"peri_pos_false",
+						"peri_neg_false"];
 var exp_sentences = shuffle(sentence_types);
 
-var verbs = ["cheem","dax","zook","blonk","plaz","brilt"]
+var verbs = ["cheem","dax","zook","blonk","plaz","brilt","wazz","rill","teck","noop","harn","stull"]
 var exp_verbs = shuffle(verbs);
 
 var animations = [fill, grow, shrink, glow, disappear, change_color];
-var exp_animations = shuffle(animations);
+var exp_animations = shuffle(animations).concat(shuffle(animations));
+console.log(exp_animations);
 
 function fill(element,delay_time){
 	var fill_anim = Raphael.animation({fill:element.attr("stroke")}, anim_time);
@@ -176,8 +188,6 @@ var experiment = {
 			}
 
 			function move_back(){
-				console.log(elements[0].attr("transform"));
-				console.log(elements[1].attr("transform"));
 				var move = Raphael.animation({transform:elements[0].attr("transform")},anim_time, "bounce");
 				elements[0].animate(move);
 			}
@@ -199,31 +209,54 @@ var experiment = {
 			qdata.obj2 = elements[1].data("color") + " " + elements[1].data("shape");
 			qdata.obj3 = elements[2].data("color") + " " + elements[2].data("shape");
 
-			if (exp_sentences[num] == "intrans_pos"){
+			if (exp_sentences[num] == "intrans_pos_true"){
 				intrans(exp_animations[num]);
 				$("#questiontxt").html('The '+ elements[0].data("color") + " " + elements[0].data("shape") + " " + exp_verbs[num]+"ed."); 
 			}
-			else if (exp_sentences[num] == "intrans_neg"){
+			else if (exp_sentences[num] == "intrans_neg_true"){
 				intrans(exp_animations[num]);
 				$("#questiontxt").html('The '+ elements[1].data("color") + " " + elements[1].data("shape") + " didn't " + exp_verbs[num] +"."); 
 			}
-			else if (exp_sentences[num] == "trans_pos"){
+			else if (exp_sentences[num] == "trans_pos_true"){
 				trans(exp_animations[num]);
 				$("#questiontxt").html('The '+ elements[0].data("color") + " " + elements[0].data("shape") + " " + exp_verbs[num] + "ed the "+ elements[1].data("color") + " " + elements[1].data("shape") + "."); 
 			}
-			else if (exp_sentences[num] == "trans_neg"){
+			else if (exp_sentences[num] == "trans_neg_true"){
 				trans(exp_animations[num]);
 				$("#questiontxt").html('The '+ elements[2].data("color") + " " + elements[2].data("shape") + " didn't " + exp_verbs[num] + " the "+ elements[1].data("color") + " " + elements[1].data("shape") + "."); 
 			}
-			else if (exp_sentences[num] == "peri_pos"){
+			else if (exp_sentences[num] == "peri_pos_true"){
 				trans(exp_animations[num]);
 				$("#questiontxt").html('The '+ elements[0].data("color") + " " + elements[0].data("shape") + " caused the "+ elements[1].data("color") + " " + elements[1].data("shape") + " to " + exp_verbs[num]+"."); 
 			}
-			else if (exp_sentences[num] == "peri_neg"){
+			else if (exp_sentences[num] == "peri_neg_true"){
 				trans(exp_animations[num]);
 				$("#questiontxt").html('The '+ elements[2].data("color") + " " + elements[2].data("shape") + " didn't cause the "+ elements[1].data("color") + " " + elements[1].data("shape") + " to " + exp_verbs[num]+".");
 			}
-			var response;
+			else if (exp_sentences[num] == "intrans_pos_false"){
+				intrans(exp_animations[num]);
+				$("#questiontxt").html('The '+ elements[1].data("color") + " " + elements[1].data("shape") + " " + exp_verbs[num]+"ed."); 
+			}
+			else if (exp_sentences[num] == "intrans_neg_false"){
+				intrans(exp_animations[num]);
+				$("#questiontxt").html('The '+ elements[0].data("color") + " " + elements[0].data("shape") + " didn't " + exp_verbs[num] +"."); 
+			}
+			else if (exp_sentences[num] == "trans_pos_false"){
+				trans(exp_animations[num]);
+				$("#questiontxt").html('The '+ elements[1].data("color") + " " + elements[1].data("shape") + " " + exp_verbs[num] + "ed the "+ elements[2].data("color") + " " + elements[2].data("shape") + "."); 
+			}
+			else if (exp_sentences[num] == "trans_neg_false"){
+				trans(exp_animations[num]);
+				$("#questiontxt").html('The '+ elements[0].data("color") + " " + elements[0].data("shape") + " didn't " + exp_verbs[num] + " the "+ elements[1].data("color") + " " + elements[1].data("shape") + "."); 
+			}
+			else if (exp_sentences[num] == "peri_pos_false"){
+				trans(exp_animations[num]);
+				$("#questiontxt").html('The '+ elements[1].data("color") + " " + elements[1].data("shape") + " caused the "+ elements[2].data("color") + " " + elements[2].data("shape") + " to " + exp_verbs[num]+"."); 
+			}
+			else if (exp_sentences[num] == "peri_neg_false"){
+				trans(exp_animations[num]);
+				$("#questiontxt").html('The '+ elements[0].data("color") + " " + elements[0].data("shape") + " didn't cause the "+ elements[1].data("color") + " " + elements[1].data("shape") + " to " + exp_verbs[num]+".");
+			}
 			$(".rating").change(function() {
 				qdata.response = $(this).attr("value");
 				judgment = true;
