@@ -189,11 +189,6 @@ var experiment = {
 				elements[0].animate(move.delay(exp_delay));
 			}
 
-			function move_back(){
-				var move = Raphael.animation({transform:elements[0].attr("transform")},anim_time, "bounce");
-				elements[0].animate(move);
-			}
-
 			function intrans (animation){
 				animation(elements[0],exp_delay);
 			}
