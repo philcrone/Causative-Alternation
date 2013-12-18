@@ -83,12 +83,20 @@ This stuff will vary by experiment.
   font-size: 0.8em;
 }
 
-#qtxt {
-  font-size: 25px;
+.qtxt {
+  font-size: 20px;
   font-family: Arial, sans-serif;
   margin: 0 auto;
   text-align: center;
-  width: 50px;
+}
+
+#questiontxt {
+	font-weight:bold;
+}
+
+#canvascontainer{
+	margin-left:auto;
+  margin-right:auto;
 }
 
 #canvas {
@@ -97,11 +105,6 @@ This stuff will vary by experiment.
 	padding:0px;
 	margin-left:auto;
   margin-right:auto;
-}
-
-.txt {
-    text-align: center;
-    font-size: 15px;
 }
 
 .response {
