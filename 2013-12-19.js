@@ -26,7 +26,6 @@ for (var i = 0; i < transitivity.length; i++){
 
 
 var exp_sentences = shuffle(sentence_types);
-console.log(exp_sentences);
 var numberOfQuestions = exp_sentences.length; // or if you have a fixed stim set, it may make sense to eliminate this variable and use its length as the counter
 
 var verbs = [	"cheem","dax","zook","blonk",
@@ -198,7 +197,7 @@ var experiment = {
     		example_qdata.question = "example";
     		example_qdata.trans = "periphrastic";
     		example_qdata.pol = "pos";
-    		example_qdata.ver = "true";
+    		example_qdata.veracity = "true";
     		example_qdata.obj1_color = example_elements[0].data("color");
 			example_qdata.obj1_shape = example_elements[0].data("shape");
 			example_qdata.obj2_color = example_elements[1].data("color");
