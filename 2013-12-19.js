@@ -1,30 +1,44 @@
 var exp_delay = 2500;
 var anim_time = 1000;
 
-var transitivity = ["intrans","trans","periphrastic"];
+var transitivity = ["intrans_intrans","intrans_trans","trans","periphrastic"];
+var question_trans = ["trans", "periphrastic"];
 var polarity = ["pos","neg"];
 var veracity = ["true","false"];
 var sentence_types = [];
 
 for (var i = 0; i < transitivity.length; i++){
 	for (var j = 0; j < polarity.length; j++) {
-		for (var k = 0; k < veracity.length; k++) {
-			var sentence_obj = {trans: transitivity[i], pol: polarity[j], ver: veracity[k]};
-			sentence_types.push(sentence_obj);
+		if (transitivity[i] == "intrans_trans"){
+				for (var l = 0; l < question_trans.length; l++){
+					var sentence_obj = {trans: transitivity[i], pol: polarity[j], question_trans: question_trans[l]};
+					sentence_types.push(sentence_obj);
+				}
 		}
-	}
+		else {
+			for (var k = 0; k < veracity.length; k++) {
+				var sentence_obj = {trans: transitivity[i], pol: polarity[j], ver: veracity[k]};
+				sentence_types.push(sentence_obj);
+			}
+		}
+	}	
 }
 
+
 var exp_sentences = shuffle(sentence_types);
+console.log(exp_sentences);
 var numberOfQuestions = exp_sentences.length; // or if you have a fixed stim set, it may make sense to eliminate this variable and use its length as the counter
 
-var verbs = ["cheem","dax","zook","blonk","plaz","brilt","wazz","rill","teck","noop","harn","stull"]
+var verbs = [	"cheem","dax","zook","blonk",
+				"plaz","brilt","wazz","rill",
+				"teck","noop","harn","stull",
+				"rish", "quapp","dack", "prib"]
 var exp_verbs = shuffle(verbs);
 
 var easing_types = ["bounce", "elastic", "backOut"]
 
 var animations = [fill, grow, shrink, glow, disappear, change_color];
-var exp_animations = shuffle(animations).concat(shuffle(animations));
+var exp_animations = shuffle(animations).concat(shuffle(animations)).concat(shuffle(animations).slice(0,4));
 
 function fill(element,delay_time){
 	var fill_anim = Raphael.animation({fill:element.attr("stroke")}, anim_time);
@@ -84,7 +98,7 @@ function disappear(element, delay_time){
 
 $(document).ready(function() {
     showSlide("instructions");
-    $("#numquestions").html(numberOfQuestions);
+    $(".numquestions").html(numberOfQuestions);
 	$("#totaltime").html(Math.round(numberOfQuestions/4,0));
     $("#instructions #mustaccept").hide();
 });
@@ -293,7 +307,7 @@ var experiment = {
 			qdata.obj3_color = elements[2].data("color");
 			qdata.obj3_shape = elements[2].data("shape");
 
-			if (exp_sentences[num].trans == "intrans"){
+			if (exp_sentences[num].trans == "intrans_intrans"){
 				intrans(exp_animations[num]);
 				setTimeout(function() {$(".responseobjects").show()}, exp_delay+anim_time);
 				var subject;
@@ -316,6 +330,31 @@ var experiment = {
 					$("#questiontxt").html('The '+ subject.data("color") + " " + subject.data("shape") + " didn't " + exp_verbs[num] +"."); 
 				}
 			}
+			else if (exp_sentences[num].trans == "intrans_trans"){
+				qdata.question_trans = exp_sentences[num].question_trans
+				intrans(exp_animations[num]);
+				setTimeout(function() {$(".responseobjects").show()}, exp_delay+anim_time);
+				var subject = elements[1];
+				var object = elements[0];
+				if (exp_sentences[num].pol == "pos") {
+					qdata.veracity = "false"
+					if (exp_sentences[num].question_trans == "trans"){
+						$("#questiontxt").html('The '+ subject.data("color") + " " + subject.data("shape") + " " + exp_verbs[num]+"ed the " + object.data("color") + " " + object.data("shape") + ".");
+					}
+					else {
+						$("#questiontxt").html('The '+ subject.data("color") + " " + subject.data("shape") + " caused the " + object.data("color") + " " + object.data("shape") + " to " + exp_verbs[num] + ".");
+					}
+				}
+				else {
+					qdata.veracity = "true"
+					if (exp_sentences[num].question_trans == "trans"){
+						$("#questiontxt").html('The '+ subject.data("color") + " " + subject.data("shape") + " didn't " + exp_verbs[num]+ " the " + object.data("color") + " " + object.data("shape") + ".");
+					}
+					else {
+						$("#questiontxt").html('The '+ subject.data("color") + " " + subject.data("shape") + " didn't cause the " + object.data("color") + " " + object.data("shape") + " to " + exp_verbs[num] + ".");
+					}
+				}
+			}
 			else {
 				trans(exp_animations[num]);
 				setTimeout(function() {$(".responseobjects").show()}, exp_delay + (2 * anim_time));
@@ -329,8 +368,8 @@ var experiment = {
 					present = elements[2];
 				}
 				else {
-					subject = elements[1];
-					object = elements[2];
+					subject = elements[2];
+					object = elements[1];
 					present = elements[0];
 				}
 				
@@ -339,7 +378,7 @@ var experiment = {
 						$("#questiontxt").html('The '+ subject.data("color") + " " + subject.data("shape") + " " + exp_verbs[num] + "ed the "+ object.data("color") + " " + object.data("shape") + "."); 
 					}
 					else {
-						$("#questiontxt").html('The '+ subject.data("color") + " " + subject.data("shape") + " didn't " + exp_verbs[num] + " the "+ object.data("color") + " " + object.data("shape") + ".");
+						$("#questiontxt").html('The '+ present.data("color") + " " + present.data("shape") + " didn't " + exp_verbs[num] + " the "+ object.data("color") + " " + object.data("shape") + ".");
 					}
 				}
 				else {
@@ -347,7 +386,7 @@ var experiment = {
 						$("#questiontxt").html('The '+ subject.data("color") + " " + subject.data("shape") + " caused the " + object.data("color") + " " + object.data("shape") + " to " + exp_verbs[num] + "."); 
 					}
 					else {
-						$("#questiontxt").html('The '+ subject.data("color") + " " + subject.data("shape") + " didn't cause the " + object.data("color") + " " + object.data("shape") + " to " + exp_verbs[num] + "."); 
+						$("#questiontxt").html('The '+ present.data("color") + " " + present.data("shape") + " didn't cause the " + object.data("color") + " " + object.data("shape") + " to " + exp_verbs[num] + "."); 
 					}
 				}
 			}
