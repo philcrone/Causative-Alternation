@@ -205,7 +205,8 @@ var experiment = {
 			example_qdata.obj3_color = example_elements[2].data("color");
 			example_qdata.obj3_shape = example_elements[2].data("shape");
     		$(".example_rating").change(function() {
-				example_qdata.response = $(this).attr("value");
+				var response = $(this).attr("value");
+				example_qdata.response = parseFloat(response);
 				judgment = true;
         	});
         	experiment.data['exdata'] = example_qdata; 
@@ -407,7 +408,7 @@ var experiment = {
 	    		}
 	    		else { // advance to next question
 	    			var endTime = (new Date()).getTime(); 
-	    			qdata.response = response;
+	    			qdata.response = parseFloat(response);
 	    			qdata.rt = endTime - startTime;
 	    			$("#continue").unbind('click'); // remove this fxn after using it once, so we can reuse the button
 					$('.rating').attr('checked',false);
